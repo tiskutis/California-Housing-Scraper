@@ -19,9 +19,11 @@ class Scraper:
     """
 
     def __init__(
-            self,
-            logger=logging.basicConfig(filename='scraping.log', filemode='w', level=logging.DEBUG),
-            basic_url: str = 'https://www.point2homes.com'
+        self,
+        logger=logging.basicConfig(
+            filename="scraping.log", filemode="w", level=logging.DEBUG
+        ),
+        basic_url: str = "https://www.point2homes.com",
     ):
         """
         Initialization method
@@ -39,15 +41,15 @@ class Scraper:
         :return: get_page() method queries the provided url and returns response, processed with beautiful soup library;
         if response is not ok, response status_code is printed and None is returned.
         """
-        logging.info(f'Getting url: {url_}')
+        logging.info(f"Getting url: {url_}")
 
         response = requests.get(url_, headers={"User-Agent": "Mozilla/5.0"})
 
         if not response.ok:
-            logging.error(f'Server response: {response.status_code}')
+            logging.error(f"Server response: {response.status_code}")
             return None
         else:
-            return bs(response.text, 'lxml')
+            return bs(response.text, "lxml")
 
     @staticmethod
     def get_location_urls(soup: BeautifulSoup) -> list:
@@ -58,9 +60,9 @@ class Scraper:
         """
         location_urls_ = []
 
-        for elem_ in soup.find_all('a', class_='psrk-events'):
-            if elem_['href'] not in location_urls_ and "CA" in elem_['href']:
-                location_urls_.append(elem_['href'])
+        for elem_ in soup.find_all("a", class_="psrk-events"):
+            if elem_["href"] not in location_urls_ and "CA" in elem_["href"]:
+                location_urls_.append(elem_["href"])
 
         return location_urls_
 
@@ -72,8 +74,12 @@ class Scraper:
         :return: price of type int or np.nan if not found
         """
         try:
-            price = int(re.findall(r'[0-9][0-9,.]+', soup.find('div', class_="price").
-                                   get_text().strip())[0].replace(',', ''))
+            price = int(
+                re.findall(
+                    r"[0-9][0-9,.]+",
+                    soup.find("div", class_="price").get_text().strip(),
+                )[0].replace(",", "")
+            )
         except Exception as err:
             logging.warning(f"Price not found. Error message: {err}")
             return np.nan
@@ -87,7 +93,11 @@ class Scraper:
         :return: number of bedrooms of type int or np.nan if not found
         """
         try:
-            bedrooms = int(re.findall(r'\d+', soup.find("li", class_="ic-beds").get_text().strip())[0])
+            bedrooms = int(
+                re.findall(
+                    r"\d+", soup.find("li", class_="ic-beds").get_text().strip()
+                )[0]
+            )
 
         except Exception as err:
             logging.warning(f"Bedroom not found. Error message: {err}")
@@ -102,7 +112,11 @@ class Scraper:
         :return: number of baths of type int or np.nan if not found
         """
         try:
-            baths = int(re.findall(r'\d+', soup.find("li", class_="ic-baths").get_text().strip())[0])
+            baths = int(
+                re.findall(
+                    r"\d+", soup.find("li", class_="ic-baths").get_text().strip()
+                )[0]
+            )
 
         except Exception as err:
             logging.warning(f"Bath not found. Error message: {err}")
@@ -117,8 +131,16 @@ class Scraper:
         :return: house size in square meters or np.nan if not found
         """
         try:
-            sqm = round(float(re.findall(r'[0-9][0-9,.]+', soup.find("li", class_="ic-sqft")
-                                         .get_text().strip())[0].replace(',', '')) / 10.764, 2)
+            sqm = round(
+                float(
+                    re.findall(
+                        r"[0-9][0-9,.]+",
+                        soup.find("li", class_="ic-sqft").get_text().strip(),
+                    )[0].replace(",", "")
+                )
+                / 10.764,
+                2,
+            )
         except Exception as err:
             logging.warning(f"Sqm not found. Error message: {err}")
             return np.nan
@@ -133,7 +155,11 @@ class Scraper:
         """
         try:
             lot_size = float(
-                re.findall(r'[0-9][0-9,.]+', soup.find("li", class_="ic-lotsize").get_text().strip())[0])
+                re.findall(
+                    r"[0-9][0-9,.]+",
+                    soup.find("li", class_="ic-lotsize").get_text().strip(),
+                )[0]
+            )
 
         except Exception as err:
             logging.warning(f"Lot size not found. Error message: {err}")
@@ -164,7 +190,7 @@ class Scraper:
         :param soup: BeautifulSoup object
         :return: dictionary with demographics in that area keys (e.g. median income, median age) and values
         """
-        demographics = soup.find("div", {"id": "demographics_content"}).find_all('td')
+        demographics = soup.find("div", {"id": "demographics_content"}).find_all("td")
         demographics_ = {}
 
         for i in range(0, len(demographics), 2):
@@ -187,30 +213,43 @@ class Scraper:
             description = self.description_dictionary(soup)
             demographics = self.demographics_dictionary(soup)
 
-            house_information['Type'] = description['Type']
-            house_information['Year Built'] = description['Year Built']
-            house_information['Parking Spaces'] = int(re.findall(r'\d+', description['Parking info'])[0])
-            house_information['Area population'] = int(demographics['Total population'].replace(',', ''))
-            house_information['Median age'] = demographics['Median age']
-            house_information['Total households'] = int(demographics['Total households'].replace(',', ''))
-            house_information['Median year built'] = demographics['Median year built']
-            house_information['Median household income'] = int(demographics['Median household income'].replace(',', ''))
-            house_information['Bedrooms'] = self.get_bedrooms(soup)
-            house_information['Baths'] = self.get_baths(soup)
-            house_information['Square Meters'] = self.get_sqm(soup)
-            house_information['Lot size (acres)'] = self.get_lot_size(soup)
-            house_information['Price'] = self.get_price(soup)
+            house_information["Type"] = description["Type"]
+            house_information["Year Built"] = description["Year Built"]
+            house_information["Parking Spaces"] = int(
+                re.findall(r"\d+", description["Parking info"])[0]
+            )
+            house_information["Area population"] = int(
+                demographics["Total population"].replace(",", "")
+            )
+            house_information["Median age"] = demographics["Median age"]
+            house_information["Total households"] = int(
+                demographics["Total households"].replace(",", "")
+            )
+            house_information["Median year built"] = demographics["Median year built"]
+            house_information["Median household income"] = int(
+                demographics["Median household income"].replace(",", "")
+            )
+            house_information["Bedrooms"] = self.get_bedrooms(soup)
+            house_information["Baths"] = self.get_baths(soup)
+            house_information["Square Meters"] = self.get_sqm(soup)
+            house_information["Lot size (acres)"] = self.get_lot_size(soup)
+            house_information["Price"] = self.get_price(soup)
 
             return house_information
 
         except Exception as err:
-            logging.warning(f"Some of the required information was missing for this house. Error message: {err}")
+            logging.warning(
+                f"Some of the required information was missing for this house. Error message: {err}"
+            )
             return None
 
-    def get_houses_in_location(self, location_url_: str,
-                               houses_in_location: set = set(),
-                               page_limit: int = 1,
-                               page_number: int = 1) -> list:
+    def get_houses_in_location(
+        self,
+        location_url_: str,
+        houses_in_location: set = set(),
+        page_limit: int = 1,
+        page_number: int = 1,
+    ) -> list:
         """
         Accepts location url and goes through pages in that location scraping every house
         until page limit is reached. Returns list of dicts with scraped information about every house in that location.
@@ -225,20 +264,29 @@ class Scraper:
         houses_information = []
 
         try:
-            new_url = self.basic_url + location_url_ + f'?page={page_number}'
+            new_url = self.basic_url + location_url_ + f"?page={page_number}"
             page_ = self.get_page(new_url)
 
-            if page_.find_all('li', class_='lslide'):
+            if page_.find_all("li", class_="lslide"):
 
-                for elem in page_.find_all('li', class_='lslide'):
-                    link = elem.find('a')['href']
-                    if link.startswith('/US') and link not in houses_in_location:
-                        houses_information.append(self.scrape_info_one_house(self.get_page(self.basic_url + link)))
+                for elem in page_.find_all("li", class_="lslide"):
+                    link = elem.find("a")["href"]
+                    if link.startswith("/US") and link not in houses_in_location:
+                        houses_information.append(
+                            self.scrape_info_one_house(
+                                self.get_page(self.basic_url + link)
+                            )
+                        )
                         houses_in_location.add(link)
 
                 if page_number <= page_limit:
                     page_number += 1
-                    self.get_houses_in_location(location_url_, houses_in_location, page_limit, page_number=page_number)
+                    self.get_houses_in_location(
+                        location_url_,
+                        houses_in_location,
+                        page_limit,
+                        page_number=page_number,
+                    )
 
         except Exception as err:
             logging.error(f"Error occurred while scraping locations. Message: {err}")
@@ -259,16 +307,18 @@ class Scraper:
         :return: None.
         """
 
-        starting_url = 'https://www.point2homes.com/US/Real-Estate-Listings/CA.html'
+        starting_url = "https://www.point2homes.com/US/Real-Estate-Listings/CA.html"
         houses = []
 
         starting_page = self.get_page(starting_url)
         locations = self.get_location_urls(starting_page)
 
         for location in locations:
-            houses.extend(self.get_houses_in_location(location, set(), page_limit=page_limit))
+            houses.extend(
+                self.get_houses_in_location(location, set(), page_limit=page_limit)
+            )
 
-        self.to_dataframe(houses).to_csv('California Housing.csv')
+        self.to_dataframe(houses).to_csv("California Housing.csv")
 
     @staticmethod
     def to_dataframe(house_list: list) -> pd.DataFrame:

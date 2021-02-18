@@ -1,8 +1,8 @@
 from scraper.Scraper import Scraper
 from bs4 import BeautifulSoup as bs, BeautifulSoup
 
-with open('test_data/test_data.html') as f:
-    soup = bs(f.read(), 'lxml')
+with open("test_data/test_data.html") as f:
+    soup = bs(f.read(), "lxml")
 
 scraper = Scraper()
 
@@ -32,30 +32,34 @@ def test_get_lot_size():
 
 
 def test_description_dictionary():
-    dict_ = {'Type': 'Residential',
-             'Style': '2 Storey',
-             'Lot Size': '0.115 Ac',
-             'MLS Number': 'PW20120310',
-             'Year Built': '2012',
-             'Parking info': '2, Attached',
-             'Zip': '92886',
-             'School District': 'Placentia-Yorba Linda Unified School District'}
+    dict_ = {
+        "Type": "Residential",
+        "Style": "2 Storey",
+        "Lot Size": "0.115 Ac",
+        "MLS Number": "PW20120310",
+        "Year Built": "2012",
+        "Parking info": "2, Attached",
+        "Zip": "92886",
+        "School District": "Placentia-Yorba Linda Unified School District",
+    }
 
     assert scraper.description_dictionary(soup) == dict_
 
 
 def test_demographics_dictionary():
-    dict_ = {'Total population': '50,545',
-             'Male population': '24,484',
-             'Female population': '26,061',
-             'Median age': '42.80',
-             'Total households': '16,559',
-             'Average people per household': '3.03',
-             'Total housing units': '17,062',
-             'Owner occupied': '13,469',
-             'Renter occupied': '3,090',
-             'Median year built': '1979',
-             'Median household income': '123,737',
-             'Average household income': '154,190'}
+    dict_ = {
+        "Total population": "50,545",
+        "Male population": "24,484",
+        "Female population": "26,061",
+        "Median age": "42.80",
+        "Total households": "16,559",
+        "Average people per household": "3.03",
+        "Total housing units": "17,062",
+        "Owner occupied": "13,469",
+        "Renter occupied": "3,090",
+        "Median year built": "1979",
+        "Median household income": "123,737",
+        "Average household income": "154,190",
+    }
 
     assert scraper.demographics_dictionary(soup) == dict_
