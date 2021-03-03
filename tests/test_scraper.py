@@ -4,30 +4,34 @@ from bs4 import BeautifulSoup as bs, BeautifulSoup
 with open("test_data/test_data.html") as f:
     soup = bs(f.read(), "lxml")
 
-scraper = Scraper()
-
 
 def test_page_type():
+    scraper = Scraper()
     assert isinstance(soup, BeautifulSoup)
 
 
 def test_get_price():
+    scraper = Scraper()
     assert scraper.get_price(soup) == 998888
 
 
 def test_get_bedrooms():
+    scraper = Scraper()
     assert scraper.get_bedrooms(soup) == 4
 
 
 def test_get_baths():
+    scraper = Scraper()
     assert scraper.get_baths(soup) == 3
 
 
 def test_get_sqm():
+    scraper = Scraper()
     assert scraper.get_sqm(soup) == 232.26
 
 
 def test_get_lot_size():
+    scraper = Scraper()
     assert scraper.get_lot_size(soup) == 0.115
 
 
@@ -43,6 +47,7 @@ def test_description_dictionary():
         "School District": "Placentia-Yorba Linda Unified School District",
     }
 
+    scraper = Scraper()
     assert scraper.description_dictionary(soup) == dict_
 
 
@@ -62,4 +67,5 @@ def test_demographics_dictionary():
         "Average household income": "154,190",
     }
 
+    scraper = Scraper()
     assert scraper.demographics_dictionary(soup) == dict_
